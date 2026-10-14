@@ -1293,7 +1293,7 @@ display:block!important;
 <p>The target of one fixes the scale during training.</p>
 <p><strong>Each position is judged by what it contributes to the combined payoff.</strong></p>
 <div class="source">
-<p>Framework: <span class="citation" data-cites="kelly2025artificial">(<a href="#/uu-computing-20" role="doc-biblioref" onclick>Kelly et al. 2025</a>)</span>.</p>
+<p>Published foundations: <span class="citation" data-cites="brittenjones1999sampling brandt2009parametric">(<a href="#/uu-computing-20" role="doc-biblioref" onclick>Britten-Jones 1999</a>; <a href="#/uu-computing-20" role="doc-biblioref" onclick>Brandt, Santa-Clara, and Valkanov 2009</a>)</span>. Transformer implementation: <span class="citation" data-cites="kelly2025artificial">(<a href="#/uu-computing-20" role="doc-biblioref" onclick>Kelly et al. 2025</a>)</span>.</p>
 </div>
 <aside class="notes">
 <p>Target 04:15–05:45.</p>
@@ -1308,12 +1308,14 @@ display:block!important;
 <summary>
 If asked
 </summary>
-<p>The loss uses unnormalised weights. For an ideal unpenalised problem with freely adjustable scale, changing the positive target rescales the solution without changing its investment direction. A finite neural-network fit need not reproduce that rescaling exactly. For reported returns, we scale each seed’s allocation to unit gross exposure and then average across seeds. Opposing seed positions can leave the ensemble with gross exposure below one.</p>
+<p>The loss uses unnormalised weights. For an ideal unpenalised problem with freely adjustable scale, changing the positive target rescales the solution without changing its investment direction. A finite neural-network fit need not reproduce that rescaling exactly. For reported returns, we scale each seed’s allocation to unit gross exposure and then average across seeds. Opposing seed positions can leave the ensemble with gross exposure below one. The constant-on-excess-return regression dates to Britten-Jones (1999). Brandt, Santa-Clara and Valkanov (2009) provide the published precedent for parameterising portfolio weights with firm characteristics. Kelly et al. supply the transformer implementation used here.</p>
 </details>
 <details>
 <summary>
 Reference
 </summary>
+<p>Britten-Jones, M. (1999). <em>The Sampling Error in Estimates of Mean-Variance Efficient Portfolio Weights</em>. <em>The Journal of Finance</em>, 54(2), 655–671. <a href="https://doi.org/10.1111/0022-1082.00120">doi:10.1111/0022-1082.00120</a></p>
+<p>Brandt, M. W., Santa-Clara, P. and Valkanov, R. (2009). <em>Parametric Portfolio Policies: Exploiting Characteristics in the Cross-Section of Equity Returns</em>. <em>The Review of Financial Studies</em>, 22(9), 3411–3447. <a href="https://doi.org/10.1093/rfs/hhp003">doi:10.1093/rfs/hhp003</a></p>
 <p>Kelly, B. T., Kuznetsov, B., Malamud, S. and Xu, T. A. (2025). <em>Artificial Intelligence Asset Pricing Models</em>. NBER Working Paper No. 33351. Revised June 2026. <a href="https://doi.org/10.3386/w33351">doi:10.3386/w33351</a></p>
 </details>
 <style type="text/css">
@@ -1338,7 +1340,7 @@ display:block!important;
 <p>A position can earn little on average and still help if it offsets the other holdings’ fluctuations.</p>
 <p><strong>An explanation must preserve how the positions work together.</strong></p>
 <div class="source">
-<p>Framework: <span class="citation" data-cites="kelly2025artificial">(<a href="#/uu-computing-20" role="doc-biblioref" onclick>Kelly et al. 2025</a>)</span>.</p>
+<p>Maximum-Sharpe and SDF foundations: <span class="citation" data-cites="brittenjones1999sampling hansen1991implications">(<a href="#/uu-computing-20" role="doc-biblioref" onclick>Britten-Jones 1999</a>; <a href="#/uu-computing-20" role="doc-biblioref" onclick>Hansen and Jagannathan 1991</a>)</span>.</p>
 </div>
 <aside class="notes">
 <p>Target 05:45–07:15.</p>
@@ -1353,13 +1355,14 @@ display:block!important;
 <summary>
 If asked
 </summary>
-<p>For a payoff direction with freely adjustable constant scale, minimising the population loss is equivalent to maximising its squared Sharpe ratio. This motivates the term maximum Sharpe ratio regression. It does not guarantee that a fitted network reaches the population optimum or preserves it out of sample. The full transformer and restricted architectures all use this objective, so the loss does not by itself explain a performance advantage specific to attention. The later return-tracking and mean–variance fits test whether the ridge weight-fitting objective alone accounts for the replacement shortfall.</p>
+<p>For a payoff direction with freely adjustable constant scale, minimising the population loss is equivalent to maximising its squared Sharpe ratio. Britten-Jones (1999) gives the regression representation of the mean-variance efficient portfolio, while Hansen and Jagannathan (1991) establish the duality between the mean-variance frontier for returns and the admissible volatility of stochastic discount factors. This does not guarantee that a fitted network reaches the population optimum or preserves it out of sample. The full transformer and restricted architectures all use this objective, so the loss does not by itself explain a performance advantage specific to attention. The later return-tracking and mean–variance fits test whether the ridge weight-fitting objective alone accounts for the replacement shortfall.</p>
 </details>
 <details>
 <summary>
 Reference
 </summary>
-<p>Kelly, B. T., Kuznetsov, B., Malamud, S. and Xu, T. A. (2025). <em>Artificial Intelligence Asset Pricing Models</em>. NBER Working Paper No. 33351. Revised June 2026. <a href="https://doi.org/10.3386/w33351">doi:10.3386/w33351</a></p>
+<p>Britten-Jones, M. (1999). <em>The Sampling Error in Estimates of Mean-Variance Efficient Portfolio Weights</em>. <em>The Journal of Finance</em>, 54(2), 655–671. <a href="https://doi.org/10.1111/0022-1082.00120">doi:10.1111/0022-1082.00120</a></p>
+<p>Hansen, L. P. and Jagannathan, R. (1991). <em>Implications of Security Market Data for Models of Dynamic Economies</em>. <em>Journal of Political Economy</em>, 99(2), 225–262. <a href="https://doi.org/10.1086/261749">doi:10.1086/261749</a></p>
 </details>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -2095,6 +2098,15 @@ overflow: hidden!important;
 display:block!important;
 }</style></aside>
 <div id="refs" class="references csl-bib-body hanging-indent" style="display: none;" data-entry-spacing="0" role="list">
+<div id="ref-brandt2009parametric" class="csl-entry" role="listitem">
+Brandt, Michael W., Pedro Santa-Clara, and Rossen Valkanov. 2009. <span>“Parametric Portfolio Policies: Exploiting Characteristics in the Cross-Section of Equity Returns.”</span> <em>The Review of Financial Studies</em> 22 (9): 3411–47. <a href="https://doi.org/10.1093/rfs/hhp003">https://doi.org/10.1093/rfs/hhp003</a>.
+</div>
+<div id="ref-brittenjones1999sampling" class="csl-entry" role="listitem">
+Britten-Jones, Mark. 1999. <span>“The Sampling Error in Estimates of Mean-Variance Efficient Portfolio Weights.”</span> <em>The Journal of Finance</em> 54 (2): 655–71. <a href="https://doi.org/10.1111/0022-1082.00120">https://doi.org/10.1111/0022-1082.00120</a>.
+</div>
+<div id="ref-hansen1991implications" class="csl-entry" role="listitem">
+Hansen, Lars Peter, and Ravi Jagannathan. 1991. <span>“Implications of Security Market Data for Models of Dynamic Economies.”</span> <em>Journal of Political Economy</em> 99 (2): 225–62. <a href="https://doi.org/10.1086/261749">https://doi.org/10.1086/261749</a>.
+</div>
 <div id="ref-jensen2023replication" class="csl-entry" role="listitem">
 Jensen, Theis Ingerslev, Bryan Kelly, and Lasse Heje Pedersen. 2023. <span>“Is There a Replication Crisis in Finance?”</span> <em>The Journal of Finance</em> 78 (5): 2465–2518. <a href="https://doi.org/10.1111/jofi.13249">https://doi.org/10.1111/jofi.13249</a>.
 </div>
