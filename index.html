@@ -1157,7 +1157,7 @@ MAIN TALK · 18 SLIDES
 <aside class="notes">
 <p>Target 00:00–00:45.</p>
 <p>This is joint work with Gareth Campbell and Colm Kelly. The question we ask is: if we can explain what a portfolio model holds, do we get the same investment result?</p>
-<p>The model chooses positions in stocks. We try to recover those positions using familiar features of the firms, such as their size, profitability and past returns. We then invest using that approximation and compare the outcome with the original model.</p>
+<p>Each month, the model turns firm characteristics into a signed weight for each stock. It learns this rule from the payoff of the whole portfolio, taking account of how the positions perform together. We approximate those weights with familiar characteristic rules and compare the resulting investment outcome.</p>
 <p><strong>Stopping sentence:</strong> What does the explanation preserve for an investor?</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
@@ -1230,6 +1230,12 @@ display:block!important;
 <p>The Sharpe ratio is average excess return divided by volatility. It measures return per unit of risk. The lower Sharpe tells us that matching much of the allocation and average return has not preserved the same investment outcome.</p>
 <p>These are returns before trading costs, and the sample still includes micro-cap stocks. The positions the approximation leaves out help offset risk in the positions it keeps.</p>
 <p><strong>Stopping sentence:</strong> We recover much of the allocation and average return, but the portfolio becomes riskier.</p>
+<details>
+<summary>
+If asked
+</summary>
+<p>Excess means above the US one-month Treasury bill benchmark embedded in the JKP data and matched to each return month. JKP uses the CRSP 30-day bill return, with the Fama–French monthly risk-free series as a fallback. The stock-return field already has this benchmark subtracted; the portfolio code does not subtract another rate.</p>
+</details>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;
@@ -1377,69 +1383,71 @@ display:block!important;
 }</style></aside>
 </section>
 <section id="uu-computing-7" class="slide level2" data-timing="75">
-<h2>Two training problems. One common test month.</h2>
+<h2>Learn two rules from the past. Apply both this month.</h2>
 <div class="timing-schema">
 <div class="timing-corner">
 
 </div>
 <div class="timing-head">
-Fit using past data
+Fit on earlier months
 </div>
 <div class="timing-head">
-Estimated rule
+Rule learned
 </div>
 <div class="timing-head">
-Apply at month-end
+Form portfolios at month-end
 </div>
 <div class="timing-head">
-Test next month
+Evaluate in month <i>t</i>+1
 </div>
 <div class="timing-label timing-model">
 Portfolio model
 </div>
 <div class="timing-box timing-model">
-<strong>60 months</strong><span>Characteristics and next-month returns</span>
+<strong>60 months</strong><span>Characteristics and realised next-month returns</span>
 </div>
 <div class="timing-box timing-model timing-arrow">
-<strong>Transformer parameters</strong><span class="timing-formula">θ̂<sub>t</sub></span>
+<strong>Transformer rule</strong><span class="timing-formula"><i>f</i><sub>θ̂<sub>t</sub></sub>(·)</span><span>θ̂<sub>t</sub> fixes the mapping</span>
 </div>
 <div class="timing-box timing-model timing-arrow">
-<strong>Original weights</strong><span class="timing-formula"><i>w</i><sub>t</sub> = model(<i>X</i><sub>t</sub>)</span>
+<strong>Original weights</strong><span class="timing-formula"><i>X</i><sub>t</sub> → <i>f</i><sub>θ̂<sub>t</sub></sub> → <i>w</i><sub>t</sub></span>
 </div>
 <div class="timing-box timing-model timing-arrow">
-<strong>Original return</strong><span class="timing-formula"><i>R</i><sub>t+1</sub> = <i>w</i><sub>t</sub>′<i>r</i><sub>t+1</sub></span>
+<strong>Evaluate original</strong><span class="timing-formula"><i>R</i><sub>t+1</sub> = <i>w</i><sub>t</sub>′<i>r</i><sub>t+1</sub></span>
 </div>
 <div class="timing-label timing-approx">
 Characteristic approximation
 </div>
 <div class="timing-box timing-approx">
-<strong>120 months</strong><span>Characteristics and saved original weights</span>
+<strong>120 months</strong><span>Characteristic terms <i>Z</i><sub>s</sub> and saved earlier weights <i>w</i><sub>s</sub></span>
 </div>
 <div class="timing-box timing-approx timing-arrow">
-<strong>Ridge coefficients</strong><span class="timing-formula">â<sub>t</sub>, β̂<sub>t</sub></span>
+<strong>Ridge rule</strong><span class="timing-formula"><i>g</i><sub>t</sub>(<i>z</i>) = â<sub>t</sub> + <i>z</i>′β̂<sub>t</sub></span>
 </div>
 <div class="timing-box timing-approx timing-arrow">
-<strong>Fitted weights</strong><span class="timing-formula">ŵ<sub>t</sub> = â<sub>t</sub> + <i>Z</i><sub>t</sub>β̂<sub>t</sub></span>
+<strong>Fitted weights</strong><span class="timing-formula"><i>Z</i><sub>t</sub> → <i>g</i><sub>t</sub> → ŵ<sub>t</sub></span>
 </div>
 <div class="timing-box timing-approx timing-arrow">
-<strong>Fitted return</strong><span class="timing-formula">R̂<sub>t+1</sub> = ŵ<sub>t</sub>′<i>r</i><sub>t+1</sub></span>
+<strong>Evaluate approximation</strong><span class="timing-formula">R̂<sub>t+1</sub> = ŵ<sub>t</sub>′<i>r</i><sub>t+1</sub></span>
 </div>
 </div>
 <div class="timing-tests">
-<strong>Allocation test at month-end:</strong> cross-sectional out-of-sample <i>R</i><sup>2</sup>(<i>w</i><sub>t</sub>, ŵ<sub>t</sub>) <span></span> <strong>Investment test after the return:</strong> mean, volatility, Sharpe and residual covariance
+<strong>Compare portfolio outputs:</strong> cross-sectional out-of-sample <i>R</i><sup>2</sup>(<i>w</i><sub>t</sub>, ŵ<sub>t</sub>) <span></span> <strong>Compare realised outcomes:</strong> mean, volatility, Sharpe and residual covariance
 </div>
 <div class="timing-repeat">
-Use past information only. Move forward one month and repeat.
+The rules are fixed before <i>r</i><sub>t+1</sub> is observed. Move forward one month and repeat.
 </div>
 <aside class="notes">
 <p>Target 07:15–08:30.</p>
 <ul>
-<li>There are two estimation problems with different targets.</li>
-<li>The transformer estimates parameters from characteristics and subsequent portfolio payoffs.</li>
-<li>The ridge regression estimates coefficients from characteristics and saved transformer weights.</li>
-<li>Current characteristics produce two sets of weights. We compare those weights immediately, then use the same next-month stock returns to compare investment outcomes.</li>
+<li>Read the top row first. The 60-month fit estimates θ̂_t. Those parameters are not the current portfolio; they define the transformer allocation rule f.</li>
+<li>At month-end, we feed the current cross-section X_t into that fitted rule. The output is the vector of original weights w_t.</li>
+<li>Now read the bottom row. The outcomes to explain are the transformer’s saved weights from earlier months. Ridge uses those weights and the corresponding characteristic terms to learn a simpler rule g_t.</li>
+<li>Apply g_t to the current characteristic terms Z_t to obtain the fitted weights ŵ_t. Z contains the characteristic ranks and their pairwise products.</li>
+<li>The third column forms the two portfolios. The current transformer weights are held out of the ridge fit; comparing w_t with ŵ_t gives the allocation R².</li>
+<li>Only the fourth column is the investment evaluation. We expose both portfolios to the same next-month stock returns, then compare mean return, volatility and Sharpe.</li>
 </ul>
-<p><strong>Stopping sentence:</strong> Training estimates rules; current characteristics produce weights; next-month returns test the portfolios.</p>
+<p><strong>Stopping sentence:</strong> Each fit learns a rule; applying the rule to current characteristics produces this month’s weights.</p>
 <details>
 <summary>
 If asked
@@ -1533,6 +1541,7 @@ display:block!important;
 If asked
 </summary>
 <p>The coefficient subscript t labels the monthly estimate, not the date of the observations used to fit it. The estimation sample runs from t minus 120 through t minus one. The current characteristics enter the prediction; the current model weights enter only its evaluation. The implementation predicts before adding the current observations to the rolling estimation window. The dictionary contains all 132 characteristic ranks and products among a fixed shortlist of 60 characteristics. The shortlist uses pre-evaluation coverage. Coefficients update monthly using the preceding 120 months, with an unpenalised intercept. The representation approximates outputs of the changing fitted model. It does not recover the model’s internal reasoning.</p>
+<p>Using the same underlying characteristics is deliberate rather than circular. We ask whether a simpler rule fitted to past model weights can replace the model on new months. Some weight fit is expected; preserving the subsequent portfolio risk and return is the empirical test.</p>
 </details>
 <style type="text/css">
 span.MJX_Assistive_MathML {
